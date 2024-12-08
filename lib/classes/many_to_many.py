@@ -1,38 +1,75 @@
 class Article:
+    all = []
+
     def __init__(self, author, magazine, title):
+        self._title = title
         self.author = author
         self.magazine = magazine
-        self.title = title
-        
+        Article.all.append(self)
+
+    @property
+    def title(self):
+        return self._title
+
+    @title.setter
+    def title(self, value):
+        raise AttributeError("Title is immutable and cannot be changed.")
+
+    @staticmethod
+    def get_all_articles():
+        return Article.all
+
+
 class Author:
     def __init__(self, name):
-        self.name = name
+        self._name = name
+        self.articles = []
 
-    def articles(self):
-        pass
+    @property
+    def name(self):
+        return self._name
 
-    def magazines(self):
-        pass
+    @name.setter
+    def name(self, value):
+        raise AttributeError("Name is immutable and cannot be changed.")
 
     def add_article(self, magazine, title):
-        pass
+        article = Article(self, magazine, title)
+        self.articles.append(article)
+        return article
 
-    def topic_areas(self):
-        pass
+    def get_topic_areas(self):
+        return list(set(article.magazine.category for article in self.articles))
+
 
 class Magazine:
     def __init__(self, name, category):
-        self.name = name
-        self.category = category
+        self._name = name
+        self._category = category
+        self.articles = []
 
-    def articles(self):
-        pass
+    @property
+    def name(self):
+        return self._name
 
-    def contributors(self):
-        pass
+    @name.setter
+    def name(self, value):
+        raise AttributeError("Name is immutable and cannot be changed.")
 
-    def article_titles(self):
-        pass
+    @property
+    def category(self):
+        return self._category
 
-    def contributing_authors(self):
-        pass
+    @category.setter
+    def category(self, value):
+        if not isinstance(value, str):
+            raise AssertionError(f"Expected str for category, got {type(value).__name__}.")
+        if len(value) == 0:
+            raise AssertionError("Category cannot be an empty string.")
+        self._category = value
+
+    def add_article(self, article):
+        self.articles.append(article)
+
+    def get_contributors(self):
+        return list(set(article.author for article in self.articles))
